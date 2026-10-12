@@ -86,3 +86,13 @@ The build copies these DLLs next to the bundled Python interpreter so users do n
 need a separate administrator-level runtime installation. The DLLs and Microsoft's
 applicable copyright/license notices retain their original terms. Releases must
 be rebuilt when these bundled runtime components need security updates.
+
+## Image-only package pruning
+
+Release 0.1.2 removes third-party test fixtures, Python caches, Haar face-classifier
+XML data and OpenCV's optional Windows FFmpeg video I/O plugin. Core image
+processing code, CPU inference runtime, OCR models, dist-info metadata and original
+license/notice texts remain. The bundle check verifies PNG decoding, perspective
+transformation and recognition of a generated AB12 image without network access.
+See [OpenCV maintainer guidance on excluding the optional video plugin](https://github.com/opencv/opencv-python/issues/353)
+and [OpenCV video I/O documentation](https://docs.opencv.org/4.x/d0/da7/videoio_overview.html).

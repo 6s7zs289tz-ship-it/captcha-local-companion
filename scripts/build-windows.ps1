@@ -8,12 +8,13 @@ $TaskRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $TaskOut = [IO.Path]::GetFullPath($OutputDirectory)
 $TaskStage = Join-Path $TaskOut 'payload'
 $TaskCsc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
-$TaskVersion = '0.1.1'
+$TaskVersion = '0.1.2'
 $TaskPythonUrl = 'https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip'
 $TaskPythonSha = '4acbed6dd1c744b0376e3b1cf57ce906f9dc9e95e68824584c8099a63025a3c3'
 if (-not (Test-Path -LiteralPath $TaskCsc)) { throw '需要 Windows 自带的 .NET Framework 4.x 编译器。' }
 if (Test-Path -LiteralPath $TaskStage) { throw '构建输出已存在，请使用一个新的输出目录，避免覆盖旧构建。' }
 [IO.Directory]::CreateDirectory($TaskStage) | Out-Null
+[IO.File]::WriteAllText((Join-Path $TaskStage '.build-owner'), 'captcha-local-companion-build', [Text.UTF8Encoding]::new($false))
 $TaskRuntime = Join-Path $TaskStage 'runtime'
 $TaskNative = Join-Path $TaskStage 'native'
 $TaskWorker = Join-Path $TaskStage 'worker'
@@ -48,7 +49,9 @@ if (-not $SkipDependencies) {
     if (-not $TaskCrt) { throw '未找到 Visual C++ x64 可再分发运行库，拒绝生成不完整安装包。' }
     Get-ChildItem -LiteralPath $TaskCrt.FullName -Filter '*.dll' | Copy-Item -Destination $TaskRuntime
     $TaskPythonExe = Join-Path $TaskRuntime 'python.exe'
-    & $TaskPythonExe '-I' (Join-Path $TaskRoot 'tests\check-bundle.py') $TaskStage
+    $TaskPrune = & (Join-Path $TaskRoot 'scripts\prune-package.ps1') -StageDirectory $TaskStage
+    Write-Host ('Package pruning: ' + ($TaskPrune | ConvertTo-Json -Compress))
+    & $TaskPythonExe '-I' '-B' (Join-Path $TaskRoot 'tests\check-bundle.py') $TaskStage
     if ($LASTEXITCODE -ne 0) { throw '安装包内的运行环境检查失败。' }
 }
 $TaskHashes = [ordered]@{}
@@ -71,5 +74,8 @@ if ($LASTEXITCODE -ne 0) { throw '独立安装器编译失败。' }
 if ($LASTEXITCODE -ne 0) { throw '安装器资源校验失败。' }
 $TaskSetupHash = (Get-FileHash -LiteralPath $TaskSetup -Algorithm SHA256).Hash.ToLowerInvariant()
 [IO.File]::WriteAllText(($TaskSetup + '.sha256'), ($TaskSetupHash + '  ' + [IO.Path]::GetFileName($TaskSetup) + "`n"), [Text.UTF8Encoding]::new($false))
+$TaskInstallerBytes = (Get-Item -LiteralPath $TaskSetup).Length
+Write-Host ('Installer bytes: ' + $TaskInstallerBytes)
+if ($TaskInstallerBytes -ge 100000000) { Write-Warning 'Installer exceeds the 100,000,000-byte mirror target.' }
 Write-Host ('已生成独立安装包：' + $TaskSetup)
 if ($SkipDependencies) { Write-Warning '本次仅检查打包链路，不是可发布安装包。' }

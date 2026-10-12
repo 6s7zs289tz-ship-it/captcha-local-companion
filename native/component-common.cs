@@ -8,7 +8,7 @@ using System.Web.Script.Serialization;
 
 namespace CaptchaLocal {
     internal static class Component {
-        internal const string Version = "0.1.1";
+        internal const string Version = "0.1.2";
         internal const string HostName = "captcha.local_ocr";
         internal const string Protocol = "2025-06-18";
         internal const int MaxInput = 4000000;

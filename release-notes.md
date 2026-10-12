@@ -7,3 +7,4 @@ Includes its own Python, CPU OCR engine and model files; no API key or separate 
 Local recognition may perform substantially worse than an online service on complex CAPTCHA images and uses additional disk space and memory. This is a generic OCR engine; no private-site tuning or credentials are included.
 
 The executable is not code-signed. Windows may display an unknown-publisher warning. Check the adjacent SHA-256 file against the download before opening it.
+The image-only package excludes development test fixtures, caches, face-classifier data and the optional FFmpeg video plugin while retaining original licenses and all OCR models. Release checks exercise PNG decoding, perspective transformation and real recognition of a generated AB12 image offline.

@@ -10,7 +10,7 @@ import time
 import unittest
 
 ROOT = pathlib.Path(sys.argv.pop(1))
-HOST = ROOT / "0.1.1" / "native" / "captcha-local-host.exe"
+HOST = ROOT / "0.1.2" / "native" / "captcha-local-host.exe"
 ORIGIN = "chrome-extension://" + "a" * 32 + "/"
 
 
@@ -35,9 +35,9 @@ class NativeTests(unittest.TestCase):
             [str(HOST), ORIGIN], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, creationflags=subprocess.CREATE_NO_WINDOW
         )
-        self.pidfile = ROOT / "0.1.1" / "mock-worker-pid.txt"
+        self.pidfile = ROOT / "0.1.2" / "mock-worker-pid.txt"
         self.pidfile.unlink(missing_ok=True)
-        self.started = ROOT / "0.1.1" / "mock-solve-started.txt"
+        self.started = ROOT / "0.1.2" / "mock-solve-started.txt"
         self.started.unlink(missing_ok=True)
 
     def tearDown(self):
@@ -113,7 +113,7 @@ class NativeTests(unittest.TestCase):
     def test_ping_does_not_create_worker(self):
         response = self.request("PING")
         self.assertTrue(response["ok"])
-        self.assertEqual(response["payload"]["version"], "0.1.1")
+        self.assertEqual(response["payload"]["version"], "0.1.2")
         self.assertFalse(response["payload"]["engineLoaded"])
         self.assertFalse(self.pidfile.exists())
 
