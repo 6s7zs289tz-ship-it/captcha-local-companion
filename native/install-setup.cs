@@ -69,7 +69,7 @@ namespace CaptchaLocal {
             try { return Marshal.PtrToStringUni(pointer); } finally { Marshal.FreeCoTaskMem(pointer); }
         }
         internal static string ExpectedPairingId(string filename) {
-            var match = Regex.Match(Path.GetFileName(filename), "^captcha-local-setup-0\\.1\\.0-([a-p]{32})(?: \\(\\d+\\))?\\.exe$", RegexOptions.CultureInvariant);
+            var match = Regex.Match(Path.GetFileName(filename), "^captcha-local-setup-0\\.1\\.1-([a-p]{32})(?: \\(\\d+\\))?\\.exe$", RegexOptions.CultureInvariant);
             return match.Success ? match.Groups[1].Value : null;
         }
         internal static List<string> FindPairing() {
@@ -220,10 +220,10 @@ namespace CaptchaLocal {
             Directory.CreateDirectory(directory);
             try {
                 string id = new string('a', 32);
-                if (ExpectedPairingId("captcha-local-setup-0.1.0-" + id + ".exe") != id) return 21;
-                if (ExpectedPairingId("captcha-local-setup-0.1.0-" + id + " (1).exe") != id) return 22;
-                if (ExpectedPairingId("captcha-local-setup-0.1.0.exe") != null) return 23;
-                if (ExpectedPairingId("captcha-local-setup-0.1.0-" + new string('x', 32) + ".exe") != null) return 24;
+                if (ExpectedPairingId("captcha-local-setup-0.1.1-" + id + ".exe") != id) return 21;
+                if (ExpectedPairingId("captcha-local-setup-0.1.1-" + id + " (1).exe") != id) return 22;
+                if (ExpectedPairingId("captcha-local-setup-0.1.1.exe") != null) return 23;
+                if (ExpectedPairingId("captcha-local-setup-0.1.1-" + new string('x', 32) + ".exe") != null) return 24;
                 string file = Component.ChildPath(directory, "captcha-local-setup-" + id + ".json");
                 File.WriteAllText(file, Component.Json().Serialize(new { extensionId = id, hostName = Component.HostName, componentVersion = Component.Version }));
                 if (ReadPairing(file) != id) return 25;

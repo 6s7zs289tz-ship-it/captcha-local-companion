@@ -8,7 +8,7 @@ $TaskRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $TaskOut = [IO.Path]::GetFullPath($OutputDirectory)
 $TaskStage = Join-Path $TaskOut 'payload'
 $TaskCsc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
-$TaskVersion = '0.1.0'
+$TaskVersion = '0.1.1'
 $TaskPythonUrl = 'https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip'
 $TaskPythonSha = '4acbed6dd1c744b0376e3b1cf57ce906f9dc9e95e68824584c8099a63025a3c3'
 if (-not (Test-Path -LiteralPath $TaskCsc)) { throw '需要 Windows 自带的 .NET Framework 4.x 编译器。' }
@@ -29,6 +29,7 @@ Copy-Item -LiteralPath (Join-Path $TaskRoot 'scripts\uninstall.ps1') -Destinatio
 foreach ($TaskNotice in @('LICENSE', 'THIRD-PARTY-NOTICES.md', 'requirements.txt')) {
     Copy-Item -LiteralPath (Join-Path $TaskRoot $TaskNotice) -Destination (Join-Path $TaskStage $TaskNotice)
 }
+Copy-Item -LiteralPath (Join-Path $TaskRoot 'licenses') -Destination (Join-Path $TaskStage 'licenses') -Recurse
 if (-not $SkipDependencies) {
     $TaskPythonZip = Join-Path $TaskOut 'python-embed.zip'
     Invoke-WebRequest -Uri $TaskPythonUrl -OutFile $TaskPythonZip

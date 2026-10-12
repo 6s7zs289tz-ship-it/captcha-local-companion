@@ -16,7 +16,7 @@ internal static class MockWorker {
             if (method == "notifications/initialized") { initialized = true; continue; }
             object result;
             if (method == "initialize") {
-                result = new { protocolVersion = "2025-06-18", capabilities = new { tools = new { } }, serverInfo = new { name = "mock", version = "0.1.0" } };
+                result = new { protocolVersion = "2025-06-18", capabilities = new { tools = new { } }, serverInfo = new { name = "mock", version = "0.1.1" } };
             } else if (method == "tools/call" && initialized) {
                 var parameters = (Dictionary<string, object>)request["params"];
                 var arguments = (Dictionary<string, object>)parameters["arguments"];

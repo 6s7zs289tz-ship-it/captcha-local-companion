@@ -25,21 +25,21 @@ jobs:
         run: ./scripts/build-windows.ps1
       - uses: actions/upload-artifact@v4
         with:
-          name: captcha-local-setup-0.1.0
+          name: captcha-local-setup-0.1.1
           path: |
-            dist/captcha-local-setup-0.1.0.exe
-            dist/captcha-local-setup-0.1.0.exe.sha256
+            dist/captcha-local-setup-0.1.1.exe
+            dist/captcha-local-setup-0.1.1.exe.sha256
           if-no-files-found: error
       - name: Publish first release without replacing an existing version
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $TaskTag = 'v0.1.0'
+          $TaskTag = 'v0.1.1'
           gh release view $TaskTag --json tagName 2>$null
           if ($LASTEXITCODE -eq 0) {
             Write-Host 'This version is already published. The new build remains an artifact.'
             exit 0
           }
-          gh release create $TaskTag dist/captcha-local-setup-0.1.0.exe dist/captcha-local-setup-0.1.0.exe.sha256 --target "$env:GITHUB_SHA" --title 'Local OCR companion 0.1.0' --notes-file release-notes.md
+          gh release create $TaskTag dist/captcha-local-setup-0.1.1.exe dist/captcha-local-setup-0.1.1.exe.sha256 --target "$env:GITHUB_SHA" --title 'Local OCR companion 0.1.1' --notes-file release-notes.md
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed.' }
